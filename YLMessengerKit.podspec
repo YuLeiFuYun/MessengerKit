@@ -1,0 +1,44 @@
+#
+# Be sure to run `pod lib lint MessengerKit.podspec' to ensure this is a
+# valid spec before submitting.
+#
+# Any lines starting with a # are optional, but their use is encouraged
+# To learn more about a Podspec see https://guides.cocoapods.org/syntax/podspec.html
+#
+
+Pod::Spec.new do |s|
+  s.name             = 'YLMessengerKit'
+  s.version          = '0.1.0'
+  s.summary          = 'A UI framework for building messenger interfaces on iOS'
+
+# This description is used to generate tags and improve search results.
+#   * Think: What does it do? Why did you write it? What is the focus?
+#   * Try to keep it short, snappy and to the point.
+#   * Write the description between the DESC delimiters below.
+#   * Finally, don't worry about the indent, CocoaPods strips it!
+
+  s.description      = <<-DESC
+MessengerKit is a drop-in UI for messenger interfaces on iOS built in Swift. Centred around a single `UIViewController`, MessengerKit is themeable to fit your needs and includes a number of powerful features:
+
+- `UICollectionView` based with pre-loading and caching of size calculation for bubbles.
+- Auto-growing input view.
+- Multiple included cell types: text, large-emoji, image, video.
+- Presentation of `SFSafariViewController`
+- Built-in, customisable themes.
+- A custom theming system to bring your own `UICollectionViewCell`s, headers, footers, and input views.
+- Avatar support (currently only in the `travamigos` theme).
+                       DESC
+
+  s.homepage         = 'https://github.com/YuLeiFuYun/MessengerKit'
+  s.license          = { :type => 'MIT', :file => 'LICENSE' }
+  s.author           = { "YuLeiFuYun" => "yuleifuyunn@gmail.com" }
+  s.source           = { :git => "https://github.com/YuLeiFuYun/YLRefreshKit.git", :tag => s.version }
+
+  s.ios.deployment_target = '10.0'
+  s.swift_version = '4.2'
+
+  s.source_files = ['MessengerKit/**/*.{h,m,swift}']
+  s.resources = 'MessengerKit/**/*.{xcassets,xib,nib}'
+  s.dependency "Kingfisher"
+
+end
