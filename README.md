@@ -38,18 +38,18 @@ The framework was built for and is used in production at [Travamigos](https://tr
 
 ## Installation
 
-MessengerKit requires Swift 4.2 and iOS 10.0 or later.
+YLMessengerKit requires Swift 4.2 and iOS 10.0 or later.
 
 ### Manual
 
-Drag the contents of the `MessengerKit` folder into your Xcode Project.
+Drag the contents of the `YLMessengerKit` folder into your Xcode Project.
 
 ### CocoaPods
 
 Add the following to your project's Podfile.
 
 ```ruby
-pod 'MessengerKit', :git => 'https://github.com/steve228uk/MessengerKit.git'
+pod 'YLMessengerKit', :git => 'https://github.com/YuLeiFuYun/MessengerKit'
 ```
 
 ## Credits
