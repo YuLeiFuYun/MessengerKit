@@ -32,7 +32,7 @@ MessengerKit is a drop-in UI for messenger interfaces on iOS built in Swift. Cen
   s.homepage         = 'https://github.com/YuLeiFuYun/MessengerKit'
   s.license          = { :type => 'MIT', :file => 'LICENSE' }
   s.author           = { "YuLeiFuYun" => "yuleifuyunn@gmail.com" }
-  s.source           = { :git => "https://github.com/YuLeiFuYun/YLRefreshKit.git", :tag => s.version }
+  s.source           = { :git => "https://github.com/YuLeiFuYun/MessengerKit.git", :tag => s.version }
 
   s.ios.deployment_target = '10.0'
   s.swift_version = '4.2'
