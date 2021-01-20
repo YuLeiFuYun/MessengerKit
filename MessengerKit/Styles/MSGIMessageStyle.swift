@@ -33,6 +33,10 @@ public struct MSGIMessageStyle: MSGMessengerStyle {
     
     public var inputPlaceholderTextColor: UIColor = .lightGray
     
+    public var inputLeadingConstant: CGFloat = 0
+    
+    public var inputTrailingConstant: CGFloat = 0
+    
     public var outgoingTextColor: UIColor = .white
     
     public var incomingTextColor: UIColor = .darkText
@@ -41,42 +45,82 @@ public struct MSGIMessageStyle: MSGMessengerStyle {
     
     public var incomingLinkColor: UIColor = UIColor(hue:0.58, saturation:0.81, brightness:0.95, alpha:1.00)
 
-    public var outgoingLinkUnderlineStyle: NSNumber = 0
+    public var outgoingLinkUnderlineStyle: NSNumber = 1
 
-    public var incomingLinkUnderlineStyle: NSNumber = 0
+    public var incomingLinkUnderlineStyle: NSNumber = 1
+    
+    public var webImageSize: ((URL) -> CGSize)?
+    
+    public var saveImageCompletionHandler: ((Bool, Error?) -> Void)?
     
     public func size(for message: MSGMessage, in collectionView: UICollectionView) -> CGSize {
-        
         var size: CGSize!
         
         switch message.body {
         case .text(let body):
-            
             let bubble = MSGTailOutgoingBubble()
             bubble.text = body
             bubble.font = font
             let bubbleSize = bubble.calculatedSize(in: CGSize(width: collectionView.bounds.width, height: .infinity))
             size = CGSize(width: collectionView.bounds.width, height: bubbleSize.height)
-            
-            break
-            
         case .emoji:
-            
             size = CGSize(width: collectionView.bounds.width, height: 60)
-            
-            break
-            
+        case .image(let image):
+            size = calculateDisplaySize(for: image.size)
+        case .imageFromUrl(let url):
+            if let imageSize = webImageSize?(url) {
+                size = calculateDisplaySize(for: imageSize)
+            } else {
+                size = CGSize(width: 269, height: 175)
+            }
         default:
-            
             size = CGSize(width: collectionView.bounds.width, height: 175)
-            
-            break
         }
         
         return size
-        
     }
     
+    private func calculateDisplaySize(for originalSize: CGSize) -> CGSize {
+        let originalWidth = originalSize.width
+        let originalHeight = originalSize.height
+        
+        let minWidth: CGFloat = 80
+        let maxWidth = UIScreen.main.bounds.width * 0.67
+        let maxHeight = UIScreen.main.bounds.height * 0.25
+        
+        if originalWidth <= maxWidth && originalHeight <= maxHeight {
+            return originalSize
+        } else if originalWidth <= maxWidth && originalHeight > maxHeight {
+            if originalWidth <= minWidth {
+                return CGSize(width: originalWidth, height: maxHeight)
+            } else {
+                let hScaleFactor = maxHeight / originalHeight
+                let scaleFactor = (originalWidth * hScaleFactor < minWidth)
+                    ? minWidth / originalWidth
+                    : hScaleFactor
+                return CGSize(width: originalWidth * scaleFactor, height: maxHeight)
+            }
+        } else if originalWidth > maxWidth && originalHeight <= maxHeight {
+            let scaleFactor = maxWidth / originalWidth
+            return CGSize(width: maxWidth, height: originalHeight * scaleFactor)
+        } else {
+            // originalWidth > maxWidth && originalHeight > maxHeight
+            let wScaleFactor = maxWidth / originalWidth
+            let hScaleFactor = maxHeight / originalHeight
+            let scaleFactor = (hScaleFactor <= wScaleFactor)
+                ? hScaleFactor
+                : wScaleFactor
+            
+            if originalWidth * scaleFactor < minWidth {
+                return CGSize(width: minWidth, height: maxHeight)
+            } else {
+                return CGSize(
+                    width: originalWidth * scaleFactor,
+                    height: originalHeight * scaleFactor
+                )
+            }
+        }
+    }
     
     // MARK: - Custom Properties
     

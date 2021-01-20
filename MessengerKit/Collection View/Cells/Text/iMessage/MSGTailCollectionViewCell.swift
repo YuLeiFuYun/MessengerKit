@@ -14,6 +14,15 @@ open class MSGTailCollectionViewCell: MSGMessageCell {
     
     @IBOutlet weak var bubbleWidthConstraint: NSLayoutConstraint!
     
+    @IBOutlet weak var stateImageView: UIImageView!
+    
+    open override var messageState: MessageState {
+        didSet {
+            guard stateImageView != nil else { return }
+            setupMessageState(in: stateImageView)
+        }
+    }
+    
     override open var message: MSGMessage? {
         didSet {
             guard let message = message,
@@ -69,12 +78,20 @@ open class MSGTailCollectionViewCell: MSGMessageCell {
 }
 
 extension MSGTailCollectionViewCell: UITextViewDelegate {
-    
     public func textView(_ textView: UITextView, shouldInteractWith URL: URL, in characterRange: NSRange, interaction: UITextItemInteraction) -> Bool {
         
         delegate?.cellLinkTapped(url: URL)
         
         return false
     }
-    
+}
+
+extension MSGTailCollectionViewCell {
+    public override func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldReceive touch: UITouch) -> Bool {
+        // 只有当触控点在 bubble 上时才响应手势
+        let point = touch.location(in: self)
+        guard bubble.frame.contains(point) else { return false }
+        
+        return true
+    }
 }

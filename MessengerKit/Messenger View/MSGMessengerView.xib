@@ -1,11 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="14109" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
-    <device id="retina4_7" orientation="portrait">
-        <adaptation id="fullscreen"/>
-    </device>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="17701" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina4_7" orientation="portrait" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14088"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="17703"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -35,6 +33,7 @@
                     <rect key="frame" x="0.0" y="0.0" width="375" height="619"/>
                 </view>
             </subviews>
+            <viewLayoutGuide key="safeArea" id="MUM-xv-iLR"/>
             <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
             <constraints>
                 <constraint firstAttribute="trailing" secondItem="Obg-rP-djA" secondAttribute="trailing" id="8RA-e1-k0X"/>
@@ -49,11 +48,12 @@
                 <constraint firstItem="4Tz-SA-1GJ" firstAttribute="leading" secondItem="MUM-xv-iLR" secondAttribute="leading" id="jFV-Zj-GAv"/>
                 <constraint firstItem="Obg-rP-djA" firstAttribute="bottom" secondItem="MUM-xv-iLR" secondAttribute="bottom" placeholder="YES" id="oRa-U2-UXa"/>
             </constraints>
-            <viewLayoutGuide key="safeArea" id="MUM-xv-iLR"/>
             <connections>
                 <outlet property="backgroundView" destination="5gI-pS-Uc8" id="HYR-Og-gKz"/>
                 <outlet property="collectionViewContainer" destination="4Tz-SA-1GJ" id="Zib-MR-mKD"/>
                 <outlet property="inputViewContainer" destination="Obg-rP-djA" id="faN-O8-nLQ"/>
+                <outlet property="inputViewContainerLeading" destination="cjn-aw-OPT" id="mbO-3x-O8K"/>
+                <outlet property="inputViewContainerTrailing" destination="8RA-e1-k0X" id="5Tj-P8-50c"/>
             </connections>
             <point key="canvasLocation" x="32" y="-125"/>
         </view>

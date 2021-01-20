@@ -8,6 +8,11 @@
 
 import UIKit
 
+extension NSNotification.Name {
+    static let messageStateChanged = NSNotification.Name(rawValue: "messageStateChanged")
+    static let shareImage = NSNotification.Name("shareImage")
+}
+
 /// `MSGMessengerViewController` is a drop in messenger interface.
 /// It incorporates both `MSGCollectionView` and `MSGInputView` into one UI.
 ///
@@ -18,7 +23,6 @@ open class MSGMessengerViewController: UIViewController {
     
     /// The input view that's used within the messenger
     private(set) public lazy var messageInputView: MSGInputView = {
-        
         var inputView: MSGInputView!
         
         if let nib = style.inputView.nib,
@@ -38,6 +42,10 @@ open class MSGMessengerViewController: UIViewController {
     private(set) public lazy var collectionView: MSGCollectionView = {
         let collectionView = style.collectionView.init()
         collectionView.keyboardDismissMode = keyboardDismissMode
+        
+        let gesture = UITapGestureRecognizer(target: self, action: #selector(datectedTapped))
+        collectionView.addGestureRecognizer(gesture)
+        
         return collectionView
     }()
     
@@ -45,6 +53,9 @@ open class MSGMessengerViewController: UIViewController {
     
     /// The layout guide for the keyboard
     private let keyboardLayoutGuide = KeyboardLayoutGuide()
+    
+    /// messageID to cell indexPath and messageState
+    internal var correspondenceRecord: [Int: (IndexPath, MessageState)] = [:]
     
     /// Sizes of the bubbles will be cached here for styles that use them
     internal var cachedSizes = [Int:CGSize]()
@@ -57,7 +68,6 @@ open class MSGMessengerViewController: UIViewController {
             }
         }
     }
-    
     
     // MARK: - Public Properties
     
@@ -90,11 +100,17 @@ open class MSGMessengerViewController: UIViewController {
     /// Defaults to `true`.
     public var shouldScrollToBottom: Bool = true
     
-    
     // MARK: - Lifecycle
     
     open override func viewDidLoad() {
         super.viewDidLoad()
+        
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(changeMessageState(noti:)),
+            name: .messageStateChanged,
+            object: nil
+        )
         
         if tintColor == nil {
             tintColor = view.tintColor
@@ -146,18 +162,20 @@ open class MSGMessengerViewController: UIViewController {
         self.view = view
     }
     
-    
     // MARK: - Setup
     
     private func setupInput() {
-        
         guard let view = view as? MSGMessengerView else {
             fatalError("Root view is not MSGMessengerView!!")
         }
         
         view.addLayoutGuide(keyboardLayoutGuide)
         view.inputViewContainer.bottomAnchor.constraint(equalTo: keyboardLayoutGuide.topAnchor).isActive = true
-    
+        if let iMessageStyle = style as? MSGIMessageStyle {
+            view.inputViewContainerLeading.constant = iMessageStyle.inputLeadingConstant
+            view.inputViewContainerTrailing.constant = -iMessageStyle.inputTrailingConstant
+        }
+        
         messageInputView.addTarget(self, action: #selector(inputViewDidChange(inputView:)), for: .valueChanged)
         messageInputView.addTarget(self, action: #selector(inputViewPrimaryActionTriggered(inputView:)), for: .primaryActionTriggered)
     }
@@ -167,7 +185,6 @@ open class MSGMessengerViewController: UIViewController {
         
         collectionView.delegate = self
         collectionView.dataSource = self
-        collectionView.prefetchDataSource = self
         collectionView.isPrefetchingEnabled = true
         
         collectionView.contentInset = UIEdgeInsets(top: 16, left: 0, bottom: 16, right: 0)
@@ -176,14 +193,11 @@ open class MSGMessengerViewController: UIViewController {
     }
     
     override open func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
-        
         if let observedObject = object as? MSGCollectionView, observedObject == collectionView {
             collectionViewLoaded = true
             collectionView.removeObserver(self, forKeyPath: "contentSize")
         }
-        
     }
-    
     
     // MARK: - Actions
     
@@ -196,6 +210,13 @@ open class MSGMessengerViewController: UIViewController {
     
     @objc open dynamic func keyboardWillShow(_ notification: Notification) {
         collectionView.scrollToBottom(animated: false)
+    }
+    
+    @objc fileprivate func datectedTapped(_ gesture: UITapGestureRecognizer) {
+        messageInputView.resignFirstResponder()
+        
+        view.window?.makeKeyAndVisible()
+        UIMenuController.shared.setMenuVisible(false, animated: false)
     }
     
     // MARK: - Users Typing
@@ -233,10 +254,27 @@ open class MSGMessengerViewController: UIViewController {
             .foregroundColor: UIColor.black
         ]))
         
-        
         collectionView.typingLabel.attributedText = attributedText
         collectionView.layoutTypingLabelIfNeeded()
         
+    }
+    
+    // MARK: - change message state
+    
+    @objc func changeMessageState(noti: Notification) {
+        guard
+            let userInfo = noti.userInfo as? [String: Int],
+            let id = userInfo["id"],
+            let state = userInfo["state"],
+            let record = correspondenceRecord[id]
+        else { return }
+        
+        let messageState = MessageState(rawValue: state) ?? .success
+        if let cell = collectionView.cellForItem(at: record.0) as? MSGMessageCell {
+            cell.messageState = messageState
+        }
+        
+        correspondenceRecord[id] = (record.0, messageState)
     }
     
 }

@@ -18,6 +18,11 @@ class MSGMessengerView: UIView {
     
     @IBOutlet weak var inputViewContainer: UIView!
 
+    @IBOutlet weak var inputViewContainerLeading: NSLayoutConstraint!
+    
+    @IBOutlet weak var inputViewContainerTrailing: NSLayoutConstraint!
+    
+    
     func add(_ collectionView: MSGCollectionView) {
         
         collectionView.translatesAutoresizingMaskIntoConstraints = false

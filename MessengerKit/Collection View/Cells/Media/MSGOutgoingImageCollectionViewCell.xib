@@ -1,11 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="14109" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
-    <device id="retina4_7" orientation="portrait">
-        <adaptation id="fullscreen"/>
-    </device>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="17701" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina4_7" orientation="portrait" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14088"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="17703"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -13,32 +11,42 @@
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
         <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
         <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="outgoingImage" id="nw2-Kp-ZmF" customClass="MSGImageCollectionViewCell" customModule="MessengerKit" customModuleProvider="target">
-            <rect key="frame" x="0.0" y="0.0" width="269" height="176"/>
+            <rect key="frame" x="0.0" y="0.0" width="390" height="176"/>
             <autoresizingMask key="autoresizingMask"/>
             <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
-                <rect key="frame" x="0.0" y="0.0" width="269" height="176"/>
+                <rect key="frame" x="0.0" y="0.0" width="390" height="176"/>
                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                 <subviews>
                     <imageView userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="cFp-Pv-V22">
-                        <rect key="frame" x="-20" y="0.0" width="269" height="176"/>
+                        <rect key="frame" x="104" y="0.0" width="269" height="176"/>
                         <constraints>
                             <constraint firstAttribute="width" constant="269" id="MBM-ua-CR4"/>
                         </constraints>
                     </imageView>
+                    <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="RFB-BX-dSt">
+                        <rect key="frame" x="74" y="78" width="20" height="20"/>
+                        <constraints>
+                            <constraint firstAttribute="height" constant="20" id="2lw-yw-XUH"/>
+                            <constraint firstAttribute="width" constant="20" id="MwD-gj-u5E"/>
+                        </constraints>
+                    </imageView>
                 </subviews>
             </view>
-            <constraints>
-                <constraint firstItem="cFp-Pv-V22" firstAttribute="top" secondItem="nw2-Kp-ZmF" secondAttribute="top" id="Yn9-Go-GO4"/>
-                <constraint firstAttribute="bottom" secondItem="cFp-Pv-V22" secondAttribute="bottom" id="pFv-QJ-ceh"/>
-                <constraint firstAttribute="trailing" secondItem="cFp-Pv-V22" secondAttribute="trailing" constant="20" id="zrh-oz-DAN"/>
-            </constraints>
             <viewLayoutGuide key="safeArea" id="DGD-7c-c5N"/>
+            <constraints>
+                <constraint firstItem="RFB-BX-dSt" firstAttribute="centerY" secondItem="cFp-Pv-V22" secondAttribute="centerY" id="PXD-mw-wiM"/>
+                <constraint firstItem="cFp-Pv-V22" firstAttribute="top" secondItem="nw2-Kp-ZmF" secondAttribute="top" id="Yn9-Go-GO4"/>
+                <constraint firstItem="cFp-Pv-V22" firstAttribute="leading" secondItem="RFB-BX-dSt" secondAttribute="trailing" constant="10" id="jon-8C-U45"/>
+                <constraint firstAttribute="bottom" secondItem="cFp-Pv-V22" secondAttribute="bottom" id="pFv-QJ-ceh"/>
+                <constraint firstAttribute="trailing" secondItem="cFp-Pv-V22" secondAttribute="trailing" constant="17" id="zrh-oz-DAN"/>
+            </constraints>
             <size key="customSize" width="269" height="176"/>
             <connections>
                 <outlet property="imageView" destination="cFp-Pv-V22" id="Ba9-cM-We5"/>
                 <outlet property="imageViewWidthConstraint" destination="MBM-ua-CR4" id="rsx-83-RdS"/>
+                <outlet property="stateImageView" destination="RFB-BX-dSt" id="VD8-6s-YQL"/>
             </connections>
-            <point key="canvasLocation" x="-82.5" y="25"/>
+            <point key="canvasLocation" x="-83.200000000000003" y="24.287856071964018"/>
         </collectionViewCell>
     </objects>
 </document>

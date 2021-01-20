@@ -12,7 +12,6 @@ import UIKit
 public class MSGTailOutgoingBubble: UITextView {
     
     lazy var tailImage: UIImage = {
-    
         let image = UIImage(
             named: "Outgoing Tail Bubble",
             in: MessengerKit.bundle,
@@ -25,11 +24,9 @@ public class MSGTailOutgoingBubble: UITextView {
         )
         
         return resizableImage!
-        
     }()
     
     lazy var standardImage: UIImage = {
-       
         let image = UIImage(
             named: "Outgoing Bubble",
             in: MessengerKit.bundle,
@@ -42,25 +39,16 @@ public class MSGTailOutgoingBubble: UITextView {
         )
         
         return resizableImage!
-        
     }()
     
     lazy var backgroundImageView: UIImageView = {
-        
-        return UIImageView(
-            image: tailImage
-        )
-        
+        return UIImageView(image: tailImage)
     }()
     
     var shouldShowTail: Bool = true {
         didSet {
             backgroundImageView.image = shouldShowTail ? tailImage : standardImage
         }
-    }
-    
-    override public var canBecomeFirstResponder: Bool {
-        return false
     }
     
     override init(frame: CGRect, textContainer: NSTextContainer?) {
@@ -130,6 +118,18 @@ public class MSGTailOutgoingBubble: UITextView {
         let startIndex = offset(from: beginningOfDocument, to: range.start)
         
         return attributedText.attribute(.link, at: startIndex, effectiveRange: nil) != nil
+    }
+    
+    @objc func customCopy() {
+        UIPasteboard.general.string = text
+    }
+    
+    public override func canPerformAction(_ action: Selector, withSender sender: Any?) -> Bool {
+        if action == #selector(customCopy) {
+            return true
+        }
+
+        return false
     }
     
 }

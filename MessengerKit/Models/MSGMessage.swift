@@ -8,6 +8,12 @@
 
 import Foundation
 
+public enum MessageState: Int {
+    case sending
+    case success
+    case failure
+}
+
 /// Represents a message within MessengerKit.
 public class MSGMessage: NSObject{
     
@@ -31,4 +37,11 @@ public class MSGMessage: NSObject{
         self.sentAt = sentAt
     }
     
+}
+
+extension MSGMessage {
+    public func changeSate(to state: MessageState) {
+        let userInfo = ["id": id, "state": state.rawValue]
+        NotificationCenter.default.post(name: .messageStateChanged, object: nil, userInfo: userInfo)
+    }
 }

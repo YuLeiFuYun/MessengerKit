@@ -8,7 +8,7 @@
 
 import UIKit
 
-extension MSGMessengerViewController: UICollectionViewDataSource, UICollectionViewDelegateFlowLayout, UICollectionViewDataSourcePrefetching, MSGSectionReusableViewDelegate {
+extension MSGMessengerViewController: UICollectionViewDataSource, UICollectionViewDelegateFlowLayout, MSGSectionReusableViewDelegate {
     
     // MARK: - DataSource
     
@@ -21,7 +21,6 @@ extension MSGMessengerViewController: UICollectionViewDataSource, UICollectionVi
     }
     
     open func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        
         guard let message = dataSource?.message(for: indexPath) else {
             fatalError("Message not defined for \(indexPath)")
         }
@@ -32,12 +31,21 @@ extension MSGMessengerViewController: UICollectionViewDataSource, UICollectionVi
         switch message.body {
         case .text:
             let identifier = message.user.isSender ? "outgoingText" : "incomingText"
-            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: identifier, for: indexPath) as! MSGMessageCell
+            let cell = collectionView.dequeueReusableCell(
+                withReuseIdentifier: identifier, for: indexPath
+            ) as! MSGMessageCell
             
             cell.delegate = self
             cell.message = message
             cell.style = style
             cell.isLastInSection = isLast
+            
+            if let record = correspondenceRecord[message.id] {
+                cell.messageState = record.1
+            } else {
+                cell.messageState = .sending
+                correspondenceRecord[message.id] = (indexPath, .sending)
+            }
             
             // If there's more than one item in the section
             // then we reload the previous one
@@ -46,38 +54,50 @@ extension MSGMessengerViewController: UICollectionViewDataSource, UICollectionVi
             }
             
             return cell
-            
-            
         case .emoji:
-            
             let identifier = message.user.isSender ? "outgoingEmoji" : "incomingEmoji"
-            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: identifier, for: indexPath) as! MSGMessageCell
+            let cell = collectionView.dequeueReusableCell(
+                withReuseIdentifier: identifier, for: indexPath
+            ) as! MSGMessageCell
             
             cell.delegate = self
             cell.message = message
             cell.style = style
             cell.isLastInSection = isLast
             
+            if let record = correspondenceRecord[message.id] {
+                cell.messageState = record.1
+            } else {
+                cell.messageState = .sending
+                correspondenceRecord[message.id] = (indexPath, .sending)
+            }
+            
             return cell
-            
-            
         case .image, .imageFromUrl:
-            
             let identifier = message.user.isSender ? "outgoingImage" : "incomingImage"
-            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: identifier, for: indexPath) as! MSGMessageCell
+            let cell = collectionView.dequeueReusableCell(
+                withReuseIdentifier: identifier, for: indexPath
+            ) as! MSGImageCollectionViewCell
             
             cell.delegate = self
             cell.message = message
             cell.style = style
             cell.isLastInSection = isLast
+            cell.imageViewWidthConstraint.constant = calculateSize(for: message).width
+            
+            if let record = correspondenceRecord[message.id] {
+                cell.messageState = record.1
+            } else {
+                cell.messageState = .sending
+                correspondenceRecord[message.id] = (indexPath, .sending)
+            }
             
             return cell
-            
-            
         case .video:
-            
             let identifier = message.user.isSender ? "outgoingVideo" : "incomingVideo"
-            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: identifier, for: indexPath) as! MSGMessageCell
+            let cell = collectionView.dequeueReusableCell(
+                withReuseIdentifier: identifier, for: indexPath
+            ) as! MSGMessageCell
             
             cell.delegate = self
             cell.message = message
@@ -85,10 +105,11 @@ extension MSGMessengerViewController: UICollectionViewDataSource, UICollectionVi
             cell.isLastInSection = isLast
             
             return cell
-            
         case .custom:
             let identifier = message.user.isSender ? "outgoingCustom" : "incomingCustom"
-            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: identifier, for: indexPath) as! MSGMessageCell
+            let cell = collectionView.dequeueReusableCell(
+                withReuseIdentifier: identifier, for: indexPath
+            ) as! MSGMessageCell
             
             cell.delegate = self
             cell.message = message
@@ -97,7 +118,6 @@ extension MSGMessengerViewController: UICollectionViewDataSource, UICollectionVi
             
             return cell
         }
-        
     }
     
     /// Updates the cell directly prior to the one being reloaded to mark it
@@ -115,53 +135,38 @@ extension MSGMessengerViewController: UICollectionViewDataSource, UICollectionVi
     // MARK: - Delegate
     
     open func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        
         guard let message = dataSource?.message(for: indexPath) else {
             fatalError("Message not defined for \(indexPath)")
         }
         
-        return calculateSize(for: message)
-    }
-    
-    
-    open func collectionView(_ collectionView: UICollectionView, prefetchItemsAt indexPaths: [IndexPath]) {
-        
-        for indexPath in indexPaths {
-            guard let message = dataSource?.message(for: indexPath) else {
-                continue
-            }
-            
-            calculateSize(for: message)
-        }
-        
-    }
-    
-    @discardableResult open func calculateSize(for message: MSGMessage) -> CGSize {
-        
-        if let size = cachedSizes[message.id] {
+        let size = calculateSize(for: message)
+        switch message.body {
+        case .image, .imageFromUrl:
+            return CGSize(width: collectionView.bounds.width, height: size.height)
+        default:
             return size
         }
+    }
+    
+    /// 对于图片 cell 返回的是 imageView 的 size，对于其他 cell 返回的是 cell 本身的 size
+    @discardableResult open func calculateSize(for message: MSGMessage) -> CGSize {
+        if let size = cachedSizes[message.id] { return size }
         
         let size = style.size(for: message, in: collectionView)
-        
         cachedSizes[message.id] = size
         
         return size
-        
     }
     
     // MARK: - Header / Footer
     
     open func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
-        
         guard let message = dataSource?.message(for: indexPath) else {
             fatalError("Message not defined for \(indexPath)")
         }
         
         switch kind {
         case UICollectionView.elementKindSectionFooter:
-            
-            
             let identifier = message.user.isSender ? "outgoingFooter" : "incomingFooter"
             let footer = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: identifier, for: indexPath) as! MSGSectionReusableView
             
@@ -171,10 +176,7 @@ extension MSGMessengerViewController: UICollectionViewDataSource, UICollectionVi
             footer.title = dataSource?.footerTitle(for: indexPath.section)
             
             return footer
-            
         default:
-            
-            
             let identifier = message.user.isSender ? "outgoingHeader" : "incomingHeader"
             let header = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: identifier, for: indexPath) as! MSGSectionReusableView
             
@@ -184,9 +186,7 @@ extension MSGMessengerViewController: UICollectionViewDataSource, UICollectionVi
             header.title = dataSource?.headerTitle(for: indexPath.section)
             
             return header
-            
         }
-        
     }
     
     open func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
@@ -207,6 +207,12 @@ extension MSGMessengerViewController: UICollectionViewDataSource, UICollectionVi
     
     public func reusableViewAvatarTapped(for user: MSGUser) {
         delegate?.avatarTapped(for: user)
+    }
+    
+    // MARK: - scroll view delegate
+    
+    public func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
+        messageInputView.resignFirstResponder()
     }
     
 }
