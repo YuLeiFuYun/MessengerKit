@@ -55,7 +55,19 @@ class MSGImageCollectionViewCell: MSGMessageCell {
             imageView.addInteraction(interaction)
         }
     }
+}
 
+extension MSGImageCollectionViewCell {
+    public override func gestureRecognizer(
+        _ gestureRecognizer: UIGestureRecognizer,
+        shouldReceive touch: UITouch
+    ) -> Bool {
+        // 只有当触控点在 imageView 上时才响应手势
+        let point = touch.location(in: self)
+        guard imageView.frame.contains(point) else { return false }
+        
+        return true
+    }
 }
 
 extension MSGImageCollectionViewCell: UIContextMenuInteractionDelegate {
@@ -74,9 +86,7 @@ extension MSGImageCollectionViewCell: UIContextMenuInteractionDelegate {
                         let data = try! Data(contentsOf: URL(fileURLWithPath: cachedURL))
                         PHAssetCreationRequest.forAsset().addResource(with: .photo, data: data, options: nil)
                     } else {
-                        DispatchQueue.main.async {
-                            PHAssetCreationRequest.creationRequestForAsset(from: self.imageView.image!)
-                        }
+                        PHAssetCreationRequest.creationRequestForAsset(from: self.imageView.image!)
                     }
                 } completionHandler: { (isSuccess, error) in
                     guard let style = self.style as? MSGIMessageStyle else { return }
