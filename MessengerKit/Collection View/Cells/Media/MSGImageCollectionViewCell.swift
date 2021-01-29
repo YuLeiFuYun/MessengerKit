@@ -80,17 +80,19 @@ extension MSGImageCollectionViewCell: UIContextMenuInteractionDelegate {
             }
             
             let save = UIAction(title: "保存", image: UIImage(systemName: "square.and.arrow.down")) { action in
-                PHPhotoLibrary.shared().performChanges {
-                    if case .imageFromUrl(let url) = self.message?.body {
-                        let cachedURL = ImageCache.default.cachePath(forKey: url.absoluteString)
-                        let data = try! Data(contentsOf: URL(fileURLWithPath: cachedURL))
-                        PHAssetCreationRequest.forAsset().addResource(with: .photo, data: data, options: nil)
-                    } else {
-                        PHAssetCreationRequest.creationRequestForAsset(from: self.imageView.image!)
+                DispatchQueue.main.async {
+                    PHPhotoLibrary.shared().performChanges {
+                        if case .imageFromUrl(let url) = self.message?.body {
+                            let cachedURL = ImageCache.default.cachePath(forKey: url.absoluteString)
+                            let data = try! Data(contentsOf: URL(fileURLWithPath: cachedURL))
+                            PHAssetCreationRequest.forAsset().addResource(with: .photo, data: data, options: nil)
+                        } else {
+                            PHAssetCreationRequest.creationRequestForAsset(from: self.imageView.image!)
+                        }
+                    } completionHandler: { (isSuccess, error) in
+                        guard let style = self.style as? MSGIMessageStyle else { return }
+                        style.saveImageCompletionHandler?(isSuccess, error)
                     }
-                } completionHandler: { (isSuccess, error) in
-                    guard let style = self.style as? MSGIMessageStyle else { return }
-                    style.saveImageCompletionHandler?(isSuccess, error)
                 }
             }
             
