@@ -13,6 +13,8 @@ public struct MSGIMessageStyle: MSGMessengerStyle {
     
     public var inputView: MSGInputView.Type = MSGImessageInputView.self
     
+    public var collectionViewTopSpace: CGFloat = 0
+    
     public var headerHeight: CGFloat = 12
     
     public var footerHeight: CGFloat = 30
