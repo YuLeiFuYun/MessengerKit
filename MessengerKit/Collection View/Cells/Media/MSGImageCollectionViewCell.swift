@@ -11,7 +11,7 @@ import Photos
 
 class MSGImageCollectionViewCell: MSGMessageCell {
     
-    @IBOutlet weak var imageView: UIImageView!
+    @IBOutlet weak var imageView: AnimatedImageView!
     @IBOutlet weak var imageViewWidthConstraint: NSLayoutConstraint!
     @IBOutlet weak var stateImageView: UIImageView!
     
@@ -46,7 +46,7 @@ class MSGImageCollectionViewCell: MSGMessageCell {
     override func awakeFromNib() {
         super.awakeFromNib()
         
-        imageView.layer.cornerRadius = 18
+        imageView.layer.cornerRadius = 8
         imageView.layer.masksToBounds = true
         imageView.isUserInteractionEnabled = true
         
@@ -85,8 +85,10 @@ extension MSGImageCollectionViewCell: UIContextMenuInteractionDelegate {
                         let cachedURL = ImageCache.default.cachePath(forKey: url.absoluteString)
                         let data = try! Data(contentsOf: URL(fileURLWithPath: cachedURL))
                         PHAssetCreationRequest.forAsset().addResource(with: .photo, data: data, options: nil)
-                    } else if case .image(let image) = self.message?.body {
-                        PHAssetCreationRequest.creationRequestForAsset(from: image)
+                    } else {
+                        DispatchQueue.main.async {
+                            PHAssetCreationRequest.creationRequestForAsset(from: self.imageView.image!)
+                        }
                     }
                 } completionHandler: { (isSuccess, error) in
                     guard let style = self.style as? MSGIMessageStyle else { return }
