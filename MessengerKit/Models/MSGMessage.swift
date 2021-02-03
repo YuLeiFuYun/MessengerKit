@@ -28,20 +28,23 @@ public class MSGMessage: NSObject{
     public let user: MSGUser
     
     /// The time that the message was sent.
-    public let sentAt: Date
+    /// format: yyyy-MM-dd HH:mm
+    public var sentAt: String
     
-    public init(id: Int, body: MSGMessageBody, user: MSGUser, sentAt: Date) {
+    /// message state
+    public var state: MessageState {
+        didSet {
+            guard state != oldValue else { return }
+            NotificationCenter.default.post(name: .messageStateChanged, object: id)
+        }
+    }
+    
+    public init(id: Int, body: MSGMessageBody, user: MSGUser, sentAt: String, state: MessageState = .sending) {
         self.id = id
         self.body = body
         self.user = user
         self.sentAt = sentAt
+        self.state = state
     }
     
-}
-
-extension MSGMessage {
-    public func changeSate(to state: MessageState) {
-        let userInfo = ["id": id, "state": state.rawValue]
-        NotificationCenter.default.post(name: .messageStateChanged, object: nil, userInfo: userInfo)
-    }
 }

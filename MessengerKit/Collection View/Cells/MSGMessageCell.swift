@@ -13,8 +13,6 @@ open class MSGMessageCell: UICollectionViewCell {
     /// The message the cell is displaying
     open var message: MSGMessage?
     
-    open var messageState: MessageState = .sending
-    
     /// Provides information on how to style the cell
     open var style: MSGMessengerStyle?
     
@@ -54,9 +52,10 @@ open class MSGMessageCell: UICollectionViewCell {
     }
     
     open func setupMessageState(in imageView: UIImageView) {
-        imageView.isHidden = false
+        guard let message = message else { return }
+        
         imageView.layer.removeAnimation(forKey: "transform.rotation.z")
-        switch messageState {
+        switch message.state {
         case .sending:
             imageView.image = UIImage(named: "loading", in: MessengerKit.bundle, compatibleWith: nil)
             

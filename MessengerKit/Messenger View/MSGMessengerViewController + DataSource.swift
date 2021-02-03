@@ -27,6 +27,7 @@ extension MSGMessengerViewController: UICollectionViewDataSource, UICollectionVi
         
         let count = collectionView.numberOfItems(inSection: indexPath.section)
         let isLast = indexPath.item + 1 == count
+        correspondenceRecord[message.id] = indexPath
         
         switch message.body {
         case .text:
@@ -39,13 +40,6 @@ extension MSGMessengerViewController: UICollectionViewDataSource, UICollectionVi
             cell.message = message
             cell.style = style
             cell.isLastInSection = isLast
-            
-            if let record = correspondenceRecord[message.id] {
-                cell.messageState = record.1
-            } else {
-                cell.messageState = .sending
-                correspondenceRecord[message.id] = (indexPath, .sending)
-            }
             
             // If there's more than one item in the section
             // then we reload the previous one
@@ -65,13 +59,6 @@ extension MSGMessengerViewController: UICollectionViewDataSource, UICollectionVi
             cell.style = style
             cell.isLastInSection = isLast
             
-            if let record = correspondenceRecord[message.id] {
-                cell.messageState = record.1
-            } else {
-                cell.messageState = .sending
-                correspondenceRecord[message.id] = (indexPath, .sending)
-            }
-            
             return cell
         case .image, .imageFromUrl:
             let identifier = message.user.isSender ? "outgoingImage" : "incomingImage"
@@ -84,13 +71,6 @@ extension MSGMessengerViewController: UICollectionViewDataSource, UICollectionVi
             cell.style = style
             cell.isLastInSection = isLast
             cell.imageViewWidthConstraint.constant = calculateSize(for: message).width
-            
-            if let record = correspondenceRecord[message.id] {
-                cell.messageState = record.1
-            } else {
-                cell.messageState = .sending
-                correspondenceRecord[message.id] = (indexPath, .sending)
-            }
             
             return cell
         case .video:

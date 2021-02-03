@@ -15,16 +15,13 @@ class MSGImageCollectionViewCell: MSGMessageCell {
     @IBOutlet weak var imageViewWidthConstraint: NSLayoutConstraint!
     @IBOutlet weak var stateImageView: UIImageView!
     
-    open override var messageState: MessageState {
-        didSet {
-            guard stateImageView != nil else { return }
-            setupMessageState(in: stateImageView)
-        }
-    }
-    
     override public var message: MSGMessage? {
         didSet {
             guard let message = message else { return }
+            
+            if let stateImageView = stateImageView {
+                setupMessageState(in: stateImageView)
+            }
             
             if case let MSGMessageBody.image(image) = message.body {
                 if image.images != nil {

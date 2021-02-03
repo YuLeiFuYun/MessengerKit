@@ -16,19 +16,16 @@ open class MSGTailCollectionViewCell: MSGMessageCell {
     
     @IBOutlet weak var stateImageView: UIImageView!
     
-    open override var messageState: MessageState {
-        didSet {
-            guard stateImageView != nil else { return }
-            setupMessageState(in: stateImageView)
-        }
-    }
-    
     override open var message: MSGMessage? {
         didSet {
             guard let message = message,
                 case let MSGMessageBody.text(body) = message.body else { return }
             
             bubble.text = body
+            
+            if let stateImageView = stateImageView {
+                setupMessageState(in: stateImageView)
+            }
         }
     }
     

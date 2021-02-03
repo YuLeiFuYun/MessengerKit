@@ -55,7 +55,7 @@ open class MSGMessengerViewController: UIViewController {
     private let keyboardLayoutGuide = KeyboardLayoutGuide()
     
     /// messageID to cell indexPath and messageState
-    internal var correspondenceRecord: [Int: (IndexPath, MessageState)] = [:]
+    internal var correspondenceRecord: [Int: IndexPath] = [:]
     
     /// Sizes of the bubbles will be cached here for styles that use them
     internal var cachedSizes = [Int:CGSize]()
@@ -266,19 +266,14 @@ open class MSGMessengerViewController: UIViewController {
     // MARK: - change message state
     
     @objc func changeMessageState(noti: Notification) {
-        guard
-            let userInfo = noti.userInfo as? [String: Int],
-            let id = userInfo["id"],
-            let state = userInfo["state"],
-            let record = correspondenceRecord[id]
-        else { return }
-        
-        let messageState = MessageState(rawValue: state) ?? .success
-        if let cell = collectionView.cellForItem(at: record.0) as? MSGMessageCell {
-            cell.messageState = messageState
+        guard let cellID = noti.object as? Int, let indexPath = correspondenceRecord[cellID] else { return }
+        if let cell = collectionView.cellForItem(at: indexPath) as? MSGEmojiCollectionViewCell {
+            cell.setupMessageState(in: cell.chatStateImageView)
+        } else if let cell = collectionView.cellForItem(at: indexPath) as? MSGImageCollectionViewCell {
+            cell.setupMessageState(in: cell.chatStateImageView)
+        } else if let cell = collectionView.cellForItem(at: indexPath) as? MSGTailCollectionViewCell {
+            cell.setupMessageState(in: cell.chatStateImageView)
         }
-        
-        correspondenceRecord[id] = (record.0, messageState)
     }
     
 }

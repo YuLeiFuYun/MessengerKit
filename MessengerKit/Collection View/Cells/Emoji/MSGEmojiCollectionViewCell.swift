@@ -13,19 +13,16 @@ class MSGEmojiCollectionViewCell: MSGMessageCell {
     @IBOutlet weak var textLabel: UILabel!
     @IBOutlet weak var chatState: UIImageView!
     
-    open override var messageState: MessageState {
-        didSet {
-            guard chatState != nil else { return }
-            setupMessageState(in: chatState)
-        }
-    }
-    
     override var message: MSGMessage? {
         didSet {
             guard let message = message,
                 case let MSGMessageBody.emoji(body) = message.body else { return }
             
             textLabel.text = body
+            
+            if let chatStateImageView = chatState {
+                setupMessageState(in: chatState)
+            }
         }
     }
     
