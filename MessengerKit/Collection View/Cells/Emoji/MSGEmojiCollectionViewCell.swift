@@ -20,7 +20,7 @@ class MSGEmojiCollectionViewCell: MSGMessageCell {
             
             textLabel.text = body
             
-            if let chatStateImageView = chatState {
+            if let chatState = chatState {
                 setupMessageState(in: chatState)
             }
         }

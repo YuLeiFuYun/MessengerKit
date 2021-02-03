@@ -268,11 +268,11 @@ open class MSGMessengerViewController: UIViewController {
     @objc func changeMessageState(noti: Notification) {
         guard let cellID = noti.object as? Int, let indexPath = correspondenceRecord[cellID] else { return }
         if let cell = collectionView.cellForItem(at: indexPath) as? MSGEmojiCollectionViewCell {
-            cell.setupMessageState(in: cell.chatStateImageView)
+            cell.setupMessageState(in: cell.chatState)
         } else if let cell = collectionView.cellForItem(at: indexPath) as? MSGImageCollectionViewCell {
-            cell.setupMessageState(in: cell.chatStateImageView)
+            cell.setupMessageState(in: cell.stateImageView)
         } else if let cell = collectionView.cellForItem(at: indexPath) as? MSGTailCollectionViewCell {
-            cell.setupMessageState(in: cell.chatStateImageView)
+            cell.setupMessageState(in: cell.stateImageView)
         }
     }
     
