@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
   s.name             = 'YLMessengerKit'
-  s.version          = '0.2.6'
+  s.version          = '0.2.7'
   s.summary          = 'A UI framework for building messenger interfaces on iOS'
 
 # This description is used to generate tags and improve search results.
