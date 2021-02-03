@@ -54,6 +54,7 @@ open class MSGMessageCell: UICollectionViewCell {
     open func setupMessageState(in imageView: UIImageView) {
         guard let message = message else { return }
         
+        imageView.isHidden = false
         imageView.layer.removeAnimation(forKey: "transform.rotation.z")
         switch message.state {
         case .sending:

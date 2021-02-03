@@ -28,7 +28,6 @@ public class MSGMessage: NSObject{
     public let user: MSGUser
     
     /// The time that the message was sent.
-    /// format: yyyy-MM-dd HH:mm
     public var sentAt: String
     
     /// message state
