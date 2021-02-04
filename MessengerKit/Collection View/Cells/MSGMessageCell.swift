@@ -93,33 +93,8 @@ extension MSGMessageCell {
     @objc open func longPressReceieved(_ sender: UILongPressGestureRecognizer) {
         guard let message = message, sender.state == .began else { return }
         
-        if let cell = self as? MSGTailCollectionViewCell {
-            var windowCreated = false
-            for window in UIApplication.shared.windows {
-                if window.tag == 7654321 {
-                    print("win.makeKeyAndVisible()")
-                    windowCreated = true
-                    window.makeKeyAndVisible()
-                }
-            }
-            
-            if !windowCreated {
-                let screenSize = UIScreen.main.bounds.size
-                let win = UIWindow(frame: CGRect(x: screenSize.width - 5, y: screenSize.height - 5, width: 5, height: 5))
-                win.backgroundColor = .clear
-                win.tag = 7654321
-                window!.addSubview(win)
-                win.makeKeyAndVisible()
-                print("create win")
-            }
-            
-            cell.bubble.becomeFirstResponder()
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-                let copyItem = UIMenuItem(title: "复制", action: #selector(cell.bubble.customCopy))
-                UIMenuController.shared.menuItems = [copyItem]
-                UIMenuController.shared.setTargetRect(cell.bubble.frame, in: cell.bubble.superview!)
-                UIMenuController.shared.setMenuVisible(true, animated: true)
-            }
+        if let cell = self as? MSGTailCollectionViewCell, !UIApplication.shared.isKeyboardPresented {
+            cell.bubble.selectAll(UIMenuController.shared)
         }
         
         delegate?.cellLongPressReceived(for: message)

@@ -219,8 +219,11 @@ open class MSGMessengerViewController: UIViewController {
     @objc fileprivate func datectedTapped(_ gesture: UITapGestureRecognizer) {
         messageInputView.resignFirstResponder()
         
-        view.window?.makeKeyAndVisible()
-        UIMenuController.shared.setMenuVisible(false, animated: false)
+        for cell in collectionView.visibleCells {
+            if let cell = cell as? MSGTailCollectionViewCell {
+                cell.bubble.selectedRange = .init()
+            }
+        }
     }
     
     // MARK: - Users Typing
