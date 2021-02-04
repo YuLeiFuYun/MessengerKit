@@ -120,16 +120,12 @@ public class MSGTailOutgoingBubble: UITextView {
         return attributedText.attribute(.link, at: startIndex, effectiveRange: nil) != nil
     }
     
-    @objc func customCopy() {
-        UIPasteboard.general.string = text
-    }
-    
     public override func canPerformAction(_ action: Selector, withSender sender: Any?) -> Bool {
-        if action == #selector(customCopy) {
+        if [#selector(selectAll(_:)), #selector(copy(_:))].contains(action) {
             return true
         }
 
-        return false
+        return super.canPerformAction(action, withSender: sender)
     }
     
 }
